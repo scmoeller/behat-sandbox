@@ -41,4 +41,49 @@ class FeatureContext extends BehatContext
 //        doSomethingWith($argument);
 //    }
 //
+    /**
+     * @Given /^I am in a directory "([^"]*)"$/
+     * @param type $dir
+     */
+    public function iAmInADirectory($dir) 
+    {
+        if (!file_exists($dir)) {
+            mkdir($dir);
+        }
+        
+        chdir($dir);
+    }
+    
+    /**
+     * @Given /^I have a file named "([^"]*)"$/
+     * @param type $file
+     */
+    public function iHaveAFileNamed($file)
+    {
+        touch($file);
+    }
+    
+    /**
+     * @When /^I run "([^"]*)"$/
+     * @param type $command
+     */
+    public function iRun($command)
+    {
+        exec($command, $output);
+        
+        $this->output = trim(implode("\n", $output));
+    }
+    
+    /**
+     * @Then /^I should get:$/
+     * @param PyStringNode $string
+     */
+    public function iShouldGet(PyStringNode $string)
+    {
+        if ((string) $string !== $this->output) {
+            throw new Exception(
+                    "Actual output is: \n" . $this->output
+            );
+        }
+    }
 }
